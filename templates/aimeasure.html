@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Measurement Converter - Chef AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='measure.css') }}">
+    <style>
+        .converter-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+            background-color: #2D2D2D;
+        }
+        
+        .converter-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .converter-header h1 {
+            color: #F5E6CA;
+            margin-bottom: 0.5rem;
+        }
+        
+        .converter-header p {
+            color: #c5b8a0;
+        }
+        
+        .converter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .converter-card {
+            background-color: #3a3a3a;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            padding: 1.5rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border: 1px solid #4a4a4a;
+        }
+        
+        .converter-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+            border-color: #800000;
+        }
+        
+        .converter-card h3 {
+            color: #F5E6CA;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .converter-card h3 .material-icons {
+            color: #D4AF37;
+        }
+        
+        .converter-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .form-group label {
+            font-weight: 500;
+            color: #F5E6CA;
+        }
+        
+        .form-input {
+            padding: 0.75rem;
+            border: 2px solid #4a4a4a;
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            transition: border-color 0.2s ease;
+            background-color: #2D2D2D;
+            color: #F5E6CA;
+        }
+        
+        .form-input:focus {
+            border-color: #800000;
+            outline: none;
+        }
+        
+        .form-select {
+            padding: 0.75rem;
+            border: 2px solid #4a4a4a;
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            background-color: #2D2D2D;
+            transition: border-color 0.2s ease;
+            color: #F5E6CA;
+        }
+        
+        .form-select:focus {
+            border-color: #800000;
+            outline: none;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        
+        .btn-primary {
+            background-color: #800000;
+            color: #F5E6CA;
+        }
+        
+        .btn-primary:hover {
+            background-color: #6a0000;
+        }
+        
+        .result-box {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: #2D2D2D;
+            border: 2px solid #4a4a4a;
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            color: #F5E6CA;
+        }
+        
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background-color: var(--surface-color);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            transition: background-color 0.2s ease;
+        }
+        
+        .back-button:hover {
+            background-color: var(--hover-color);
+        }
+        
+        .common-conversions {
+            margin-top: 2rem;
+            background-color: #3a3a3a;
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid #4a4a4a;
+        }
+        
+        .common-conversions h3 {
+            margin-bottom: 1rem;
+            color: #F5E6CA;
+        }
+        
+        .conversion-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .conversion-table th,
+        .conversion-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #4a4a4a;
+        }
+        
+        .conversion-table th {
+            font-weight: 600;
+            color: #F5E6CA;
+        }
+        
+        .conversion-table td {
+            color: #c5b8a0;
+        }
+        
+        @media (max-width: 768px) {
+            .converter-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="/dashboard" class="logo">
+                <img src="/static/images/images.jpeg" alt="Chef AI" class="logo-img" width="40" height="40">
+                <span class="logo-text">Chef AI</span>
+            </a>
+            <div class="nav-links">
+                <a href="/dashboard" class="nav-link">Dashboard</a>
+                <a href="/aimeasure" class="nav-link active">Measurement Converter</a>
+                <a href="/search" class="nav-link">Tutorials</a>
+                <a href="/ai" class="nav-link">Chef Bot</a>
+                <a href="#" id="logout-btn" class="nav-link">Logout</a>
+            </div>
+            <button class="hamburger" aria-label="Menu">
+                <span class="material-icons">menu</span>
+            </button>
+        </div>
+    </nav>
+
+    <div class="converter-container">
+        <a href="/dashboard" class="back-button">
+            <span class="material-icons">arrow_back</span>
+            Back to Dashboard
+        </a>
+        
+        <div class="converter-header">
+            <h1>Cooking Measurement Converter</h1>
+            <p>Convert between different cooking measurements with ease</p>
+        </div>
+        
+        <div class="converter-grid">
+        <div class="converter-card">
+                <h3>
+                    <span class="material-icons">psychology</span>
+                    AI Measurement Converter
+                </h3>
+                <p style="color: #c5b8a0; margin-bottom: 1rem;">Convert vague measurements like "a handful" or "a pinch" into precise measurements</p>
+                <form id="aiConverterForm" class="ai-converter-form">
+                    <div class="form-group">
+                        <label for="measurement">Vague Measurement</label>
+                        <input type="text" id="measurement" placeholder="e.g., a handful, a pinch, a dash" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="ingredient">Ingredient</label>
+                        <input type="text" id="ingredient" placeholder="e.g., flour, sugar, salt" required>
+                    </div>
+                    <button type="submit">Convert with AI</button>
+                </form>
+                <div id="errorContainer" class="error-container"></div>
+                <div id="resultContainer" class="result-container">
+                    <div class="interpretation" id="interpretation"></div>
+                    <div class="result-section">
+                        <h4>Weight</h4>
+                        <div class="result-item">
+                            <span class="result-label">Grams:</span>
+                            <span class="result-value"><span id="grams"></span> g</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Ounces:</span>
+                            <span class="result-value"><span id="ounces"></span> oz</span>
+                        </div>
+                    </div>
+                    <div class="result-section">
+                        <h4>Volume</h4>
+                        <div class="result-item">
+                            <span class="result-label">Milliliters:</span>
+                            <span class="result-value"><span id="milliliters"></span> ml</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Cups:</span>
+                            <span class="result-value"><span id="cups"></span> cups</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Tablespoons:</span>
+                            <span class="result-value"><span id="tablespoons"></span> tbsp</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Teaspoons:</span>
+                            <span class="result-value"><span id="teaspoons"></span> tsp</span>
+                        </div>
+                    </div>
+                    <div class="result-section">
+                        <h4>Ingredient Info</h4>
+                        <div class="result-item">
+                            <span class="result-label">Category:</span>
+                            <span class="result-value" id="category"></span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">State:</span>
+                            <span class="result-value" id="state"></span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Density:</span>
+                            <span class="result-value"><span id="density"></span> g/ml</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="converter-card">
+                <h3>
+                    <span class="material-icons">scale</span>
+                    Weight Converter
+                </h3>
+                <form id="weightForm" class="converter-form">
+                    <div class="form-group">
+                        <label for="weightValue">Value</label>
+                        <input type="number" id="weightValue" class="form-input" step="0.01" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="weightFrom">From</label>
+                        <select id="weightFrom" class="form-select" required>
+                            <option value="g">Grams (g)</option>
+                            <option value="kg">Kilograms (kg)</option>
+                            <option value="oz">Ounces (oz)</option>
+                            <option value="lb">Pounds (lb)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="weightTo">To</label>
+                        <select id="weightTo" class="form-select" required>
+                            <option value="g">Grams (g)</option>
+                            <option value="kg">Kilograms (kg)</option>
+                            <option value="oz">Ounces (oz)</option>
+                            <option value="lb">Pounds (lb)</option>
+                        </select>
+                </div>
+                    <button type="submit" class="btn btn-primary">Convert</button>
+                    <div id="weightResult" class="result-box" style="display: none;"></div>
+                </form>
+                </div>
+
+            <div class="converter-card">
+                <h3>
+                    <span class="material-icons">local_drink</span>
+                    Volume Converter
+                </h3>
+                <form id="volumeForm" class="converter-form">
+                    <div class="form-group">
+                        <label for="volumeValue">Value</label>
+                        <input type="number" id="volumeValue" class="form-input" step="0.01" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="volumeFrom">From</label>
+                        <select id="volumeFrom" class="form-select" required>
+                            <option value="ml">Milliliters (ml)</option>
+                            <option value="l">Liters (l)</option>
+                            <option value="tsp">Teaspoons (tsp)</option>
+                            <option value="tbsp">Tablespoons (tbsp)</option>
+                            <option value="cup">Cups</option>
+                            <option value="pt">Pints (pt)</option>
+                            <option value="qt">Quarts (qt)</option>
+                            <option value="gal">Gallons (gal)</option>
+                        </select>
+                </div>
+                    <div class="form-group">
+                        <label for="volumeTo">To</label>
+                        <select id="volumeTo" class="form-select" required>
+                            <option value="ml">Milliliters (ml)</option>
+                            <option value="l">Liters (l)</option>
+                            <option value="tsp">Teaspoons (tsp)</option>
+                            <option value="tbsp">Tablespoons (tbsp)</option>
+                            <option value="cup">Cups</option>
+                            <option value="pt">Pints (pt)</option>
+                            <option value="qt">Quarts (qt)</option>
+                            <option value="gal">Gallons (gal)</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Convert</button>
+                    <div id="volumeResult" class="result-box" style="display: none;"></div>
+            </form>
+                </div>
+                
+            <div class="converter-card">
+                <h3>
+                    <span class="material-icons">thermostat</span>
+                    Temperature Converter
+                </h3>
+                <form id="tempForm" class="converter-form">
+                    <div class="form-group">
+                        <label for="tempValue">Value</label>
+                        <input type="number" id="tempValue" class="form-input" step="0.1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tempFrom">From</label>
+                        <select id="tempFrom" class="form-select" required>
+                            <option value="c">Celsius (°C)</option>
+                            <option value="f">Fahrenheit (°F)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="tempTo">To</label>
+                        <select id="tempTo" class="form-select" required>
+                            <option value="c">Celsius (°C)</option>
+                            <option value="f">Fahrenheit (°F)</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Convert</button>
+                    <div id="tempResult" class="result-box" style="display: none;"></div>
+                </form>
+                        </div>
+                            </div>
+        
+        <div class="common-conversions">
+            <h3>Common Cooking Conversions</h3>
+            <table class="conversion-table">
+                <thead>
+                    <tr>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Conversion</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1 tablespoon</td>
+                        <td>3 teaspoons</td>
+                        <td>15 ml</td>
+                    </tr>
+                    <tr>
+                        <td>1 cup</td>
+                        <td>16 tablespoons</td>
+                        <td>240 ml</td>
+                    </tr>
+                    <tr>
+                        <td>1 cup</td>
+                        <td>8 fluid ounces</td>
+                        <td>240 ml</td>
+                    </tr>
+                    <tr>
+                        <td>1 pint</td>
+                        <td>2 cups</td>
+                        <td>480 ml</td>
+                    </tr>
+                    <tr>
+                        <td>1 quart</td>
+                        <td>4 cups</td>
+                        <td>960 ml</td>
+                    </tr>
+                    <tr>
+                        <td>1 gallon</td>
+                        <td>4 quarts</td>
+                        <td>3.8 liters</td>
+                    </tr>
+                    <tr>
+                        <td>1 pound</td>
+                        <td>16 ounces</td>
+                        <td>454 grams</td>
+                    </tr>
+                </tbody>
+            </table>
+                            </div>
+                        </div>
+    
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <img src="/static/images/images.jpeg" alt="Chef AI" class="footer-logo">
+                    <p>Making cooking smarter with AI</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <a href="/aimeasure">Measurement Converter</a>
+                    <a href="/search">Tutorials</a>
+                    <a href="/ai">Chef Bot</a>
+                </div>
+                <div class="footer-links">
+                    <h4>Legal</h4>
+                    <a href="/privacy">Privacy Policy</a>
+                    <a href="/terms">Terms of Service</a>
+                    </div>
+                <div class="footer-newsletter">
+                    <h4>Stay Updated</h4>
+                    <p>Subscribe to our newsletter for cooking tips and updates</p>
+                    <form class="newsletter-form">
+                        <input type="email" placeholder="Enter your email" class="form-input">
+                        <button type="submit" class="btn btn-primary">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Chef AI. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script type="module" src="{{ url_for('static', filename='firebase-config.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='dashboard.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // AI Measurement Converter
+            document.getElementById('aiConverterForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const measurement = document.getElementById('measurement').value.trim();
+                const ingredient = document.getElementById('ingredient').value.trim();
+                
+                if (!measurement || !ingredient) {
+                    showError('Please fill in both measurement and ingredient fields');
+                    return;
+                }
+
+                // Hide any previous results or errors
+                document.getElementById('resultContainer').style.display = 'none';
+                document.getElementById('errorContainer').style.display = 'none';
+                
+                // Show loading state
+                const submitButton = this.querySelector('button[type="submit"]');
+                const originalText = submitButton.textContent;
+                submitButton.textContent = 'Converting...';
+                submitButton.disabled = true;
+
+                try {
+                    const response = await fetch('/api/convert', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ measurement, ingredient })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        displayResults(data);
+                    } else {
+                        showError(data.error || 'Failed to convert measurement');
+                    }
+                } catch (error) {
+                    showError('An error occurred while converting the measurement');
+                    console.error('Conversion error:', error);
+                } finally {
+                    // Restore button state
+                    submitButton.textContent = originalText;
+                    submitButton.disabled = false;
+                }
+            });
+
+            function displayResults(data) {
+                // Update all result fields
+                document.getElementById('interpretation').textContent = data.interpretation;
+                document.getElementById('grams').textContent = data.grams;
+                document.getElementById('ounces').textContent = data.ounces;
+                document.getElementById('milliliters').textContent = data.milliliters;
+                document.getElementById('cups').textContent = data.cups;
+                document.getElementById('tablespoons').textContent = data.tablespoons;
+                document.getElementById('teaspoons').textContent = data.teaspoons;
+                document.getElementById('category').textContent = data.ingredient_info.category;
+                document.getElementById('state').textContent = data.ingredient_info.state;
+                document.getElementById('density').textContent = data.ingredient_info.density;
+
+                // Show results
+                document.getElementById('resultContainer').style.display = 'block';
+                
+                // Scroll to results
+                document.getElementById('resultContainer').scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'nearest'
+                });
+            }
+
+            function showError(message) {
+                const errorContainer = document.getElementById('errorContainer');
+                errorContainer.textContent = message;
+                errorContainer.style.display = 'block';
+                
+                // Scroll to error
+                errorContainer.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'nearest'
+                });
+            }
+
+            // Weight conversion
+            document.getElementById('weightForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const value = parseFloat(document.getElementById('weightValue').value);
+                const from = document.getElementById('weightFrom').value;
+                const to = document.getElementById('weightTo').value;
+                
+                // Convert to grams first (base unit)
+                let grams;
+                switch(from) {
+                    case 'g': grams = value; break;
+                    case 'kg': grams = value * 1000; break;
+                    case 'oz': grams = value * 28.35; break;
+                    case 'lb': grams = value * 453.592; break;
+                }
+                
+                // Convert from grams to target unit
+                let result;
+                switch(to) {
+                    case 'g': result = grams; break;
+                    case 'kg': result = grams / 1000; break;
+                    case 'oz': result = grams / 28.35; break;
+                    case 'lb': result = grams / 453.592; break;
+                }
+                
+                const resultBox = document.getElementById('weightResult');
+                resultBox.textContent = `${value} ${getUnitName(from)} = ${result.toFixed(2)} ${getUnitName(to)}`;
+                resultBox.style.display = 'block';
+            });
+            
+            // Volume conversion
+            document.getElementById('volumeForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const value = parseFloat(document.getElementById('volumeValue').value);
+                const from = document.getElementById('volumeFrom').value;
+                const to = document.getElementById('volumeTo').value;
+                
+                // Convert to milliliters first (base unit)
+                let ml;
+                switch(from) {
+                    case 'ml': ml = value; break;
+                    case 'l': ml = value * 1000; break;
+                    case 'tsp': ml = value * 4.93; break;
+                    case 'tbsp': ml = value * 14.79; break;
+                    case 'cup': ml = value * 236.59; break;
+                    case 'pt': ml = value * 473.18; break;
+                    case 'qt': ml = value * 946.35; break;
+                    case 'gal': ml = value * 3785.41; break;
+                }
+                
+                // Convert from milliliters to target unit
+                let result;
+                switch(to) {
+                    case 'ml': result = ml; break;
+                    case 'l': result = ml / 1000; break;
+                    case 'tsp': result = ml / 4.93; break;
+                    case 'tbsp': result = ml / 14.79; break;
+                    case 'cup': result = ml / 236.59; break;
+                    case 'pt': result = ml / 473.18; break;
+                    case 'qt': result = ml / 946.35; break;
+                    case 'gal': result = ml / 3785.41; break;
+                }
+                
+                const resultBox = document.getElementById('volumeResult');
+                resultBox.textContent = `${value} ${getUnitName(from)} = ${result.toFixed(2)} ${getUnitName(to)}`;
+                resultBox.style.display = 'block';
+            });
+            
+            // Temperature conversion
+            document.getElementById('tempForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const value = parseFloat(document.getElementById('tempValue').value);
+                const from = document.getElementById('tempFrom').value;
+                const to = document.getElementById('tempTo').value;
+                
+                let result;
+                if (from === 'c' && to === 'f') {
+                    result = (value * 9/5) + 32;
+                } else if (from === 'f' && to === 'c') {
+                    result = (value - 32) * 5/9;
+                } else {
+                    result = value;
+                }
+                
+                const resultBox = document.getElementById('tempResult');
+                resultBox.textContent = `${value}° ${from.toUpperCase()} = ${result.toFixed(1)}° ${to.toUpperCase()}`;
+                resultBox.style.display = 'block';
+            });
+            
+            // Helper function to get full unit names
+            function getUnitName(unit) {
+                const units = {
+                    'g': 'grams',
+                    'kg': 'kilograms',
+                    'oz': 'ounces',
+                    'lb': 'pounds',
+                    'ml': 'milliliters',
+                    'l': 'liters',
+                    'tsp': 'teaspoons',
+                    'tbsp': 'tablespoons',
+                    'cup': 'cups',
+                    'pt': 'pints',
+                    'qt': 'quarts',
+                    'gal': 'gallons',
+                    'c': 'Celsius',
+                    'f': 'Fahrenheit'
+                };
+                return units[unit] || unit;
+            }
+            
+            // Handle mobile menu
+            document.querySelector('.hamburger').addEventListener('click', function() {
+                document.querySelector('.nav-links').classList.toggle('active');
+            });
+            
+            // Handle logout
+            document.getElementById('logout-btn').addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = '/logout';
+            });
+        });
+    </script>
+</body>
+</html>

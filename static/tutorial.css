@@ -1,0 +1,578 @@
+/* 
+==================================
+<---------COMMON FOR ALL--------->
+==================================
+ */
+:root {
+    --primary-color: #800000;
+    --primary-hover: #6a0000;
+    --secondary-color: #F5E6CA;
+    --accent-color: #D4AF37;
+    --background-color: #2D2D2D;
+    --surface-color: #3a3a3a;
+    --text-primary: #F5E6CA;
+    --text-secondary: #c5b8a0;
+    --border-color: #4a4a4a;
+    --error-color: #dc3545;
+    --success-color: #28a745;
+    --warning-color: #ffc107;
+    --info-color: #17a2b8;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-primary);
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+}
+
+.tutorial-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+    background-color: #2D2D2D;
+    color: #F5E6CA;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    
+}
+
+.tutorial-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.tutorial-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+
+.tutorial-header p {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.tutorial-search {
+    max-width: 600px;
+    margin: 0 auto 2rem;
+}
+
+.search-form {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.search-input {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: var(--surface-color);
+    color: var(--text-primary);
+    transition: border-color 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.search-button {
+    padding: 0.75rem 1.5rem;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: background-color 0.3s ease;
+}
+
+.search-button:hover {
+    background-color: var(--primary-hover);
+}
+
+.tutorial-results {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.tutorial-card {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: var(--surface-color);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border-color);
+}
+
+.tutorial-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    border-color: var(--primary-color);
+}
+
+.tutorial-card-image {
+    width: 100%;
+    aspect-ratio: 16/9;
+    object-fit: cover;
+}
+
+.tutorial-card-content {
+    padding: 1.5rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.tutorial-card-title {
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: var(--text-primary);
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.tutorial-card-channel {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.tutorial-card-channel .material-icons {
+    font-size: 1rem;
+    color: var(--accent-color);
+}
+
+.tutorial-card-description {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin-bottom: 1.5rem;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    flex: 1;
+}
+
+.tutorial-card-link {
+    margin-top: auto;
+    padding: 0.75rem 1rem;
+    background-color: var(--primary-color);
+    color: white;
+    text-align: center;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+    display: inline-block;
+}
+
+.tutorial-card-link:hover {
+    background-color: var(--primary-hover);
+}
+
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background-color: var(--surface-color);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+    transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+    background-color: #4a4a4a;
+}
+
+.loading-indicator {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    display: none;
+}
+
+.loading-indicator .material-icons {
+    font-size: 2rem;
+    color: var(--accent-color);
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.no-results {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    display: none;
+}
+
+.no-results .material-icons {
+    font-size: 2rem;
+    color: var(--accent-color);
+    margin-bottom: 1rem;
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .search-form {
+        flex-direction: column;
+    }
+    
+    .tutorial-results {
+        grid-template-columns: 1fr;
+    }
+    
+    .tutorial-header h1 {
+        font-size: 2rem;
+    }
+    
+    .tutorial-header p {
+        font-size: 1rem;
+    }
+}
+
+.background-container {
+    background-image: url('https://i.pinimg.com/736x/58/c3/33/58c33377dfcbb3022493dec49d098b02.jpg');
+    /* This will make the background image repeat */
+    background-repeat: repeat;
+    /* Adjust as necessary: auto, contain, or cover */
+    background-size: auto;
+    /* Position the background image */
+    background-position: top left;
+    /* Add some padding for content */
+    padding: 20px;
+    /* Set height as needed, or use min-height */
+    height: 100vh;
+    /* Optional: to center content */
+    display: flex;
+    /* Optional: stack content vertically */
+    flex-direction: column;
+    /* Optional: center content horizontally */
+    align-items: center;
+    /* Optional: center content vertically */
+    justify-content: center;
+    /* Change text color for contrast, if necessary */
+    color: white;
+}
+
+/* 
+================================
+<------NAVIGATION BAR---------->
+================================
+ */
+.topnav {
+    overflow: hidden;
+    position: sticky;
+    top: 0;
+    width: 100%;
+    background-color: #333;
+}
+
+.topnav a {
+    float: left;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+    margin-right: 10px;
+}
+
+.topnav a:hover {
+    color: rgb(35, 35, 35);
+    border-radius: 20px;
+    
+    color: rgb(0, 0, 0);
+    background-color: #cacacacc;
+}
+
+.topnav a.active {
+    background-color: #ffffffcc;
+    border-radius: 20px;
+    color: rgb(0, 0, 0);
+}
+
+.topnav-right {
+    float: right;
+    padding-right: 10px;
+}
+
+section {
+    margin: 20px 0;
+    padding: 20px;
+    border: 1px solid #ff0000;
+}
+
+footer {
+    text-align: center;
+    background: #f1f1f1;
+    position: sticky;
+    bottom: 0;
+    width: 100%;
+    z-index: 2;
+}
+
+/* 
+=================================
+    SIGN UP AND SIGN IN PAGES
+=================================
+*/
+
+.back-button {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: small;
+    background-color: #3eb558;
+    border-radius: 15px;
+    padding: 2px 10px;
+    display: inline-block;
+}
+
+.social-login {
+    display: flex;
+    justify-content: space-evenly;
+    border-radius: 20px;
+    margin-bottom: 20px;
+}
+
+.social-login .google-login,
+.social-login .apple-login {
+    margin-inline: 10px;
+    border-radius: 15px;
+    color: rgb(0, 0, 0);
+    display: flex;
+    font-size: 14px;
+    align-items: center;
+    justify-content: space-evenly;
+    cursor: pointer;
+    background-color: rgb(223, 223, 223);
+}
+
+.google-login img,
+.apple-login img {
+    width: 25px;
+    margin-right: 11px;
+}
+
+.separator {
+    text-align: center;
+    margin: 20px 0px;
+    position: relative;
+}
+
+.separator span {
+    background: rgb(255, 255, 255);
+    padding: 0 10px;
+    position: relative;
+    z-index: 1;
+}
+
+.separator::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #cdcdcd;
+    z-index: 0;
+}
+
+.show-password:hover~input {
+    -webkit-text-security: none;
+}
+
+.register {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f4f4f4;
+}
+
+.auth-container {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    width: 25%;
+    min-width: 300px;
+    text-align: center;
+}
+
+.tabs {
+    padding: 5px;
+    display: flex;
+    justify-content: space-evenly;
+    margin-bottom: 20px;
+}
+
+.tabs div {
+    width: 35%;
+    padding: 10px;
+    border-radius: 15px;
+    transition: all 0.3s ease;
+}
+
+.tabs div:hover {
+    background-color: hsla(0, 0%, 16%, 0.518);
+    color: white;
+}
+
+.tabs div:first-child {
+    margin-right: 6px;
+}
+
+.tabs div:last-child {
+    margin-left: 6px;
+}
+
+.tab {
+    cursor: pointer;
+    padding: 10px;
+    background: #ddd;
+}
+
+.tab.active {
+    background: #000000;
+    box-shadow: 2px 2px 10px #333;
+    color: white;
+}
+
+.register form {
+    display: none;
+}
+
+.register input:not([type="checkbox"]) {
+    width: calc(100% - 20px);
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: 0.3s ease;
+}
+
+.register input:focus {
+    outline: none;
+    border-color: #000080;
+    box-shadow: 0 0 5px rgba(0, 0, 128, 0.2);
+}
+
+/* Password field container */
+.password-container {
+    position: relative;
+}
+
+/* Show password container - Updated */
+.show-password-container {
+    width: 50px;
+    display: flex;
+    align-items: end;
+    justify-content: space-around;
+    gap: 1;
+    margin: 10px 0;
+    padding-left: 63%;
+}
+
+.show-password-container label {
+    font-size: 12px;
+    margin-right: 10px;
+    color: #333;
+}
+
+.show-password-container input,
+.show-password-container label {
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.show-password-container input {
+    cursor: pointer;
+    margin: 0;
+}
+
+.register button {
+    width: calc(100% - 20px);
+    background-color: #000080;
+    padding: 15px;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    margin: 10px 0;
+}
+
+.register button:hover {
+    background-color: #0056b3;
+}
+
+.forgot-password {
+    display: block;
+    margin: 10px 0;
+    color: #000080;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.3s ease;
+    text-align: right;
+}
+
+.forgot-password:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+.video-popup-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensure it appears above other content */
+}
+
+.video-popup {
+    max-width: 90%;
+    max-height: 90%;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+}

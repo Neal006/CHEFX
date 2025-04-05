@@ -1,0 +1,238 @@
+    <div class="chat-container">
+        <div class="content-grid">
+            <div class="main-content">
+                <a href="/dashboard" class="back-button">
+                    <span class="material-icons">arrow_back</span>
+                    Back to Dashboard
+                </a>
+                
+                <div class="chat-header">
+                    <h1>Chef Bot</h1>
+                    <p>Your AI cooking assistant</p>
+                </div>
+                
+                <div id="chat-messages" class="chat-messages"></div>
+                
+                <form id="chat-form" class="chat-form">
+                    <div class="input-wrapper">
+                        <textarea id="user-input" 
+                                placeholder="Ask about recipes, cooking techniques, or meal planning..."
+                                rows="1"></textarea>
+                        <button type="submit">
+                            <span class="material-icons">send</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="history-sidebar">
+                <h2>Chat History</h2>
+                <div id="history-list" class="history-list">
+                    {% if history %}
+                        {% for item in history %}
+                            <div class="history-item" onclick="loadHistoryItem('{{ item|tojson|safe }}')">
+                                <div class="history-item-header">
+                                    <span class="history-timestamp">{{ item.timestamp }}</span>
+                                </div>
+                                <div class="history-preview">
+                                    <p class="user-message">{{ item.message[:50] }}{% if item.message|length > 50 %}...{% endif %}</p>
+                                    <p class="bot-message">{{ item.response[:50] }}{% if item.response|length > 50 %}...{% endif %}</p>
+                                </div>
+                            </div>
+
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .history-sidebar {
+            background: #3a3a3a;
+            border-radius: 8px;
+            padding: 1.5rem;
+            height: fit-content;
+            position: sticky;
+            top: 2rem;
+            max-height: calc(100vh - 4rem);
+            overflow-y: auto;
+        }
+
+        .history-sidebar h2 {
+            color: #F5E6CA;
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .history-item {
+            background: #2D2D2D;
+            border: 1px solid #4a4a4a;
+            border-radius: 6px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .history-item:hover {
+            background: #404040;
+            transform: translateY(-2px);
+        }
+
+        .history-item-header {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 0.5rem;
+        }
+
+        .history-timestamp {
+            color: #c5b8a0;
+            font-size: 0.75rem;
+        }
+
+        .history-preview {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .history-preview p {
+            margin: 0;
+            font-size: 0.875rem;
+            line-height: 1.4;
+        }
+
+        .history-preview .user-message {
+            color: #F5E6CA;
+        }
+
+        .history-preview .bot-message {
+            color: #c5b8a0;
+        }
+
+        .empty-history {
+            text-align: center;
+            padding: 2rem;
+            color: #c5b8a0;
+        }
+
+        .empty-history .material-icons {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: #800000;
+        }
+
+        @media (max-width: 1024px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .history-sidebar {
+                position: static;
+                margin-top: 2rem;
+                max-height: none;
+            }
+        }
+    </style>
+
+    <script>
+        function loadHistoryItem(historyItem) {
+            // Clear current messages
+            $('#chat-messages').empty();
+            
+            // Add the historical message pair
+            appendMessage('user', historyItem.message);
+            appendMessage('bot', historyItem.response);
+            
+            // Scroll to bottom
+            scrollToBottom();
+        }
+
+        function updateHistory(newHistoryItem) {
+            const historyList = $('#history-list');
+            
+            // Create new history item HTML
+            const historyItemHtml = `
+                <div class="history-item" onclick='loadHistoryItem(${JSON.stringify(newHistoryItem)})'>
+                    <div class="history-item-header">
+                        <span class="history-timestamp">Just now</span>
+                    </div>
+                    <div class="history-preview">
+                        <p class="user-message">${newHistoryItem.message.substring(0, 50)}${newHistoryItem.message.length > 50 ? '...' : ''}</p>
+                        <p class="bot-message">${newHistoryItem.response.substring(0, 50)}${newHistoryItem.response.length > 50 ? '...' : ''}</p>
+                    </div>
+                </div>
+            `;
+            
+            // Remove empty history message if present
+            $('.empty-history').remove();
+            
+            // Prepend new history item
+            historyList.prepend(historyItemHtml);
+        }
+
+        // Update the existing chat submission handler
+        $('#chat-form').on('submit', function(e) {
+            e.preventDefault();
+            
+            const message = $('#user-input').val().trim();
+            if (!message) return;
+            
+            // Clear input
+            $('#user-input').val('');
+            
+            // Show user message
+            appendMessage('user', message);
+            
+            // Show typing indicator
+            appendTypingIndicator();
+            
+            // Send to server
+            $.ajax({
+                url: '/chat',
+                method: 'POST',
+                data: { message: message },
+                success: function(response) {
+                    // Remove typing indicator
+                    removeTypingIndicator();
+                    
+                    // Show bot response
+                    appendMessage('bot', response.message);
+                    
+                    // Update history if provided
+                    if (response.history) {
+                        updateHistory({
+                            message: message,
+                            response: response.message,
+                            timestamp: new Date().toISOString()
+                        });
+                    }
+                    
+                    // Scroll to bottom
+                    scrollToBottom();
+                },
+                error: function() {
+                    removeTypingIndicator();
+                    appendMessage('error', 'Sorry, there was an error processing your request.');
+                    scrollToBottom();
+                }
+            });
+        });
+
+        // ... existing code ...
+    </script> 

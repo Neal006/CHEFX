@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
+  <title>Privacy Policy - Chef AI</title>
+
+  <style>
+    body {
+        background-color: #2D2D2D;
+        color: #F5E6CA;
+        font-family: 'Poppins', sans-serif;
+    }
+    
+    .privacy-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+    
+    .privacy-header {
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+    
+    .privacy-header h1 {
+        color: #F5E6CA;
+        margin-bottom: 0.5rem;
+        font-size: 2rem;
+        font-weight: 700;
+    }
+    
+    .privacy-content {
+        background-color: #3a3a3a;
+        border-radius: var(--radius-md);
+        padding: 2rem;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid #4a4a4a;
+    }
+    
+    .privacy-content h2 {
+        color: #F5E6CA;
+        margin: 1.5rem 0 1rem;
+        font-size: 1.5rem;
+    }
+    
+    .privacy-content h2:first-child {
+        margin-top: 0;
+    }
+    
+    .privacy-content p {
+        color: #c5b8a0;
+        margin-bottom: 1rem;
+        line-height: 1.6;
+    }
+    
+    .privacy-content ul {
+        margin-bottom: 1rem;
+        padding-left: 1.5rem;
+    }
+    
+    .privacy-content li {
+        color: #c5b8a0;
+        margin-bottom: 0.5rem;
+        line-height: 1.6;
+    }
+    
+    .privacy-content a {
+        color: #D4AF37;
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+    
+    .privacy-content a:hover {
+        color: #c09c30;
+        text-decoration: underline;
+    }
+    
+    .back-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background-color: #3a3a3a;
+        color: #F5E6CA;
+        border: 1px solid #4a4a4a;
+        border-radius: var(--radius-md);
+        text-decoration: none;
+        font-weight: 500;
+        margin-bottom: 1rem;
+        transition: background-color 0.2s ease;
+    }
+    
+    .back-button:hover {
+        background-color: #4a4a4a;
+    }
+  </style>
+
+  </head>
+
+  <body>
+
+    <nav class="navbar">
+      <div class="navbar-container">
+        <a href="/" class="logo">
+          <img src="/static/images/images.jpeg" alt="Chef AI" class="logo-img" width="40" height="40">
+          <span class="logo-text">Chef AI</span>
+        </a>
+        <div class="nav-links">
+          <a href="/#features" class="nav-link">Features</a>
+          <a href="/#how-it-works" class="nav-link">How It Works</a>
+          <a href="/login" class="nav-link">Login</a>
+          <a href="/signup" class="nav-link btn btn-primary">Sign Up</a>
+        </div>
+        <button class="hamburger" aria-label="Menu">
+          <span class="material-icons">menu</span>
+        </button>
+      </div>
+    </nav>
+
+    <main>
+      <div class="privacy-container">
+        <a href="/" class="back-button">
+          <span class="material-icons">arrow_back</span>
+          Back to Home
+        </a>
+        
+        <div class="privacy-header">
+          <h1>Privacy Policy</h1>
+        </div>
+        
+        <div class="privacy-content">
+          <h2>1. Information We Collect</h2>
+          <p>Chef AI collects information that you provide directly to us, such as when you create an account, use our services, or communicate with us. This may include your name, email address, and cooking preferences.</p>
+          
+          <h2>2. How We Use Your Information</h2>
+          <p>We use the information we collect to provide, maintain, and improve our services, including:</p>
+          <ul>
+            <li>Personalizing recipe recommendations based on your preferences</li>
+            <li>Processing and completing your requests</li>
+            <li>Sending you technical notices and updates</li>
+            <li>Responding to your comments and questions</li>
+          </ul>
+          
+          <h2>3. Information Sharing</h2>
+          <p>We do not sell, trade, or otherwise transfer your personal information to outside parties. This does not include trusted third parties who assist us in operating our website, conducting our business, or servicing you.</p>
+          
+          <h2>4. Data Security</h2>
+          <p>We implement a variety of security measures to maintain the safety of your personal information. However, no method of transmission over the Internet or method of electronic storage is 100% secure.</p>
+          
+          <h2>5. Cookies</h2>
+          <p>Chef AI uses cookies to enhance your experience on our site. Cookies are small files that a site transfers to your computer's hard drive through your web browser that enables the site to recognize your browser and remember certain information.</p>
+          
+          <h2>6. Your Choices</h2>
+          <p>You may update, correct, or delete your account information at any time by logging into your account. If you wish to delete your account, please contact us at privacy@chefai.com.</p>
+          
+          <h2>7. Changes to This Policy</h2>
+          <p>We may update this privacy policy from time to time. We will notify you of any changes by posting the new privacy policy on this page and updating the effective date.</p>
+          
+          <h2>8. Contact Us</h2>
+          <p>If you have any questions about this privacy policy, please contact us at privacy@chefai.com.</p>
+        </div>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <img src="/static/images/images.jpeg" alt="Chef AI" class="footer-logo">
+            <p>Making cooking smarter with AI</p>
+          </div>
+          <div class="footer-links">
+            <h4>Quick Links</h4>
+            <a href="/#features">Features</a>
+            <a href="/#how-it-works">How It Works</a>
+            <a href="/login">Login</a>
+            <a href="/signup">Sign Up</a>
+          </div>
+          <div class="footer-links">
+            <h4>Legal</h4>
+            <a href="/privacy">Privacy Policy</a>
+            <a href="/terms">Terms of Service</a>
+          </div>
+          <div class="footer-newsletter">
+            <h4>Stay Updated</h4>
+            <p>Subscribe to our newsletter for cooking tips and updates</p>
+            <form class="newsletter-form">
+              <input type="email" placeholder="Enter your email" class="form-input">
+              <button type="submit" class="btn btn-primary">Subscribe</button>
+            </form>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2024 Chef AI. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+  </body>
+
+</html>

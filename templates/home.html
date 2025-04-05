@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHEFX - Your Personal Cooking Assistant</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        /* Hero Section */
+        .hero {
+            background-image: linear-gradient(135deg, rgba(128, 0, 0, 0.9) 0%, rgba(45, 45, 45, 0.9) 100%), url('/static/images/hero-bg.jpg');
+            background-size: cover;
+            background-position: center;
+            color: #F5E6CA;
+            padding: 6rem 1rem;
+            text-align: center;
+        }
+        
+        .hero-content {
+            max-width: 800  px;
+            margin: 0 auto;
+        }
+        
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #F5E6CA;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            color: #F5E6CA;
+            opacity: 0.9;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 5rem 1rem;
+            background-color: var(--background-color);
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .section-header h2 {
+            font-size: 2rem;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+        
+        .section-header p {
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .feature-card {
+            background-color: #3a3a3a;
+            border: 1px solid #4a4a4a;
+            border-radius: var(--radius-md);
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .feature-icon {
+            background-color: rgba(128, 0, 0, 0.2);
+            color: #D4AF37;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .feature-icon .material-icons {
+            font-size: 30px;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.25rem;
+            color: #F5E6CA;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-card p {
+            color: #c5b8a0;
+            margin-bottom: 1.5rem;
+            flex: 1;
+        }
+        
+        /* How It Works Section */
+        .how-it-works {
+            padding: 5rem 1rem;
+            background-color: #3a3a3a;
+        }
+        
+        .steps {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .step {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 3rem;
+            gap: 2rem;
+        }
+        
+        .step:last-child {
+            margin-bottom: 0;
+        }
+        
+        .step-number {
+            background-color: #800000;
+            color: #F5E6CA;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+        
+        .step-content h3 {
+            font-size: 1.25rem;
+            color: #F5E6CA;
+            margin-bottom: 0.5rem;
+        }
+        
+        .step-content p {
+            color: #c5b8a0;
+        }
+        
+        /* CTA Section */
+        .cta {
+            padding: 5rem 1rem;
+            background-image: linear-gradient(135deg, rgba(128, 0, 0, 0.9) 0%, rgba(45, 45, 45, 0.9) 100%), url('/static/images/cta-bg.jpg');
+            background-size: cover;
+            background-position: center;
+            color: #F5E6CA;
+            text-align: center;
+        }
+        
+        .cta-content {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .cta h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .cta p {
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .step {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .section-header h2,
+            .cta h2 {
+                font-size: 1.75rem;
+            }
+        }
+
+        .section-class {
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        footer {
+            margin-top: 0;
+            padding-top: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="/" class="logo">
+                <img src="/static/images/images.jpeg" alt="CHEFX" class="logo-img" width="40" height="40">
+                <span class="logo-text">CHEFX</span>
+            </a>
+            <div class="nav-links">
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#how-it-works" class="nav-link">How It Works</a>
+                <a href="/aboutus" class="nav-link">About Us</a>
+                <a href="/login" class="nav-link btn btn-primary">Login</a>
+                <a href="/signup" class="nav-link btn btn-primary">Sign Up</a>
+            </div>
+            <button class="hamburger" aria-label="Menu">
+                <span class="material-icons">menu</span>
+            </button>
+        </div>
+    </nav><br><br><br>
+
+    <section class="hero">
+        <br><br>
+        <div class="hero-content">
+            <h1>Your Personal AI Cooking Assistant</h1>
+            <p>Get personalized recipes, convert measurements, and find cooking tutorials - all in one place.</p>
+            <div class="hero-buttons">
+                <a href="/signup" class="btn btn-accent">Get Started</a>
+                <a href="#features" class="btn btn-outline">Learn More</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="features">
+        <div class="section-header"><br><br><br>
+            <h2>Powerful Features</h2>
+            <p>CHEFX combines cutting-edge AI technology with practical cooking tools to enhance your culinary experience.</p>
+        </div>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <span class="material-icons">restaurant</span>
+                </div>
+                <h3>AI Recipe Generator</h3>
+                <p>Get personalized recipe recommendations based on ingredients you have, dietary preferences, or cuisine types.</p>
+                <a href="/signup" class="btn btn-text">Try It Now</a>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <span class="material-icons">scale</span>
+                </div>
+                <h3>Measurement Converter</h3>
+                <p>Easily convert between different units of measurement for ingredients, including volume, weight, and temperature.</p>
+                <a href="/signup" class="btn btn-text">Try It Now</a>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <span class="material-icons">play_circle</span>
+                </div>
+                <h3>Tutorial Finder</h3>
+                <p>Find the best cooking tutorials and videos for any recipe or cooking technique you want to learn.</p>
+                <a href="/signup" class="btn btn-text">Try It Now</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="how-it-works" class="how-it-works">
+        <div class="section-header"><br><br><br><br>
+            <h2>How It Works</h2>
+            <p>Getting started with CHEFX is simple and straightforward.</p>
+        </div>
+        
+        <div class="steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3>Create Your Account</h3>
+                    <p>Sign up for a free account to access all of CHEFX's features and personalized recommendations.</p>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3>Tell Us What You Need</h3>
+                    <p>Ask for recipe ideas, measurement conversions, or cooking tutorials using natural language.</p>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3>Get Instant Results</h3>
+                    <p>Receive personalized recommendations, accurate conversions, and curated tutorials instantly.</p>
+                </div>
+            </div>
+            <br><br>
+        </div>
+    </section>
+
+    <section class="cta">
+        <div class="cta-content">
+            <h2>Ready to Transform Your Cooking Experience?</h2>
+            <p>Join thousands of home cooks who are already using CHEFX to enhance their culinary skills and discover new recipes.</p>
+            <a href="/signup" class="btn btn-light">Sign Up for Free</a>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <img src="/static/images/images.jpeg" alt="CHEFX" class="footer-logo">
+                    <p>Making cooking smarter with AI</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <a href="#features">Features</a>
+                    <a href="#how-it-works">How It Works</a>
+                    <a href="/login">Login</a>
+                    <a href="/signup">Sign Up</a>
+                </div>
+                <div class="footer-links">
+                    <h4>Legal</h4>
+                    <a href="/privacy">Privacy Policy</a>
+                    <a href="/terms">Terms of Service</a>
+        </div>
+                <div class="footer-newsletter">
+                    <h4>Stay Updated</h4>
+                    <p>Subscribe to our newsletter for cooking tips and updates</p>
+                    <form class="newsletter-form">
+                        <input type="email" placeholder="Enter your email" class="form-input">
+                        <button type="submit" class="btn btn-primary">Subscribe</button>
+                    </form>
+            </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 CHEFX. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+</body>
+</html>

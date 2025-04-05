@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - CHEFX</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <style>
+    /* Critical CSS for preventing layout shifts */
+    .logo-img {
+      width: 50px;
+      height: 50px;
+      object-fit: contain;
+      background: transparent;
+      min-width: 96px;
+    }
+    .hero-image img {
+      aspect-ratio: 16/9;
+      width: 100%;
+      height: auto;
+      min-height: 300px;
+      object-fit: fill;
+    }
+    .footer-logo {
+      width: 96px;
+      height: 96px;
+      object-fit: contain;
+      background: transparent;
+      min-width: 96px;
+    }
+    .dashboard-container {
+      min-height: 100vh;
+      background-color: #2D2D2D;
+      color: #F5E6CA;
+    }
+    
+    /* Fix for mobile navigation */
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+      
+      .nav-links.active {
+        display: flex;
+      }
+    }
+    
+    /* Hero section styling */
+    .hero {
+      background-image: linear-gradient(47deg, rgba(128, 0, 0, 0.9) 0%, rgba(45, 45, 45, 0.9) 100%), url('/static/images/hero-bg.jpg');
+      background-size: cover;
+      background-position: center;
+      padding: 4rem 1rem;
+    }
+    
+    .hero-content {
+      max-width: 600px;
+      color: #F5E6CA;
+    }
+    
+    .hero-title {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #F5E6CA;
+    }
+    
+    .hero-subtitle {
+      color: #c5b8a0;
+    }
+    
+    #username {
+      color: #D4AF37;
+      font-weight: 700;
+    }
+    
+    /* Feature cards styling */
+    .feature-card {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      background-color: #3a3a3a;
+      border: 1px solid #4a4a4a;
+    }
+    
+    .feature-card h3 {
+      color: #F5E6CA;
+    }
+    
+    .feature-card p {
+      color: #c5b8a0;
+    }
+    
+    .feature-icon {
+      background-color: rgba(128, 0, 0, 0.2);
+      color: #D4AF37;
+    }
+    
+    .feature-card .btn {
+      margin-top: auto;
+    }
+    
+    /* Stats cards styling */
+    .stat-card {
+      height: 100%;
+      background-color: #3a3a3a;
+      border: 1px solid #4a4a4a;
+    }
+    
+    .stat-card h3 {
+      color: #F5E6CA;
+    }
+    
+    .stat-number {
+      color: #D4AF37;
+      font-weight: 700;
+    }
+    
+    .stat-card .material-icons {
+      color: #800000;
+    }
+    
+    /* Section titles */
+    .section-title h2 {
+      color: #F5E6CA;
+    }
+    
+    .section-title p {
+      color: #c5b8a0;
+    }
+    
+    .stats-grid {
+        cursor: pointer;
+    }
+    
+    .stat-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+    
+    .history-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        z-index: 1000;
+    }
+    
+    .modal-content {
+        position: relative;
+        background-color: #2D2D2D;
+        margin: 5vh auto;
+        padding: 0;
+        width: 90%;
+        max-width: 800px;
+        max-height: 90vh;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.5rem;
+        border-bottom: 1px solid #4a4a4a;
+    }
+    
+    .modal-header h2 {
+        color: #F5E6CA;
+        margin: 0;
+    }
+    
+    .close-modal {
+        color: #c5b8a0;
+        font-size: 2rem;
+        cursor: pointer;
+        transition: color 0.2s ease;
+    }
+    
+    .close-modal:hover {
+        color: #F5E6CA;
+    }
+    
+    .modal-body {
+        padding: 1.5rem;
+        overflow-y: auto;
+        max-height: calc(90vh - 100px);
+    }
+    
+    .loading-spinner {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        color: #c5b8a0;
+    }
+    
+    .loading-spinner .material-icons {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    .history-item {
+        background: #3a3a3a;
+        border: 1px solid #4a4a4a;
+        border-radius: 6px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .history-item:last-child {
+        margin-bottom: 0;
+    }
+    
+    .history-timestamp {
+        color: #c5b8a0;
+        font-size: 0.875rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .history-content {
+        color: #F5E6CA;
+    }
+    
+    .empty-history {
+        text-align: center;
+        padding: 2rem;
+        color: #c5b8a0;
+    }
+    
+    .recipe-response pre {
+        white-space: pre-wrap;
+        font-family: inherit;
+        margin: 0.5rem 0;
+        color: #F5E6CA;
+    }
+    
+    .video-list {
+        margin-top: 0.5rem;
+    }
+    
+    .video-item {
+        padding: 0.5rem;
+        margin: 0.5rem 0;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 4px;
+    }
+    
+    .video-link {
+        display: inline-block;
+        color: #D4AF37;
+        text-decoration: none;
+        margin-top: 0.5rem;
+        transition: color 0.2s ease;
+    }
+    
+    .video-link:hover {
+        color: #F5E6CA;
+        text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav class="navbar">
+    <div class="navbar-container">
+      <a href="/dashboard" class="logo">
+        <img src="/static/images/images.jpeg" alt="CHEFX" class="logo-img">
+        <span class="logo-text">CHEFX</span>
+      </a>
+      <div class="nav-links">
+        <a href="#features" class="nav-link">Features</a>
+        <a href="#quick-stats" class="nav-link">Your Cooking Journey</a>
+        <a href="/ai" class="nav-link">Chef Bot</a>
+        <a href="/aimeasure" class="nav-link">Measurement Converter</a>
+        <a href="/search" class="nav-link">Tutorials</a>
+        <a href="#" id="logout-btn" class="nav-link">Logout</a>
+      </div>
+      <button class="hamburger" aria-label="Menu">
+        <span class="material-icons">menu</span>
+      </button>
+    </div>
+  </nav>
+  <main class="dashboard-container">
+    <div class="hero">
+      <div class="hero-content animate-fade-in">
+        <h1 class="hero-title">Welcome, <span id="username">Chef</span>!</h1>
+        <p class="hero-subtitle">CHEFX-powered cooking assistant is ready to help you create perfect dishes every time.</p>
+        <div class="hero-cta">
+          <a href="/ai" class="btn btn-accent">
+            <span class="material-icons">smart_toy</span>
+            Start Cooking
+          </a>
+          <a href="#features" class="btn btn-outline">
+            <span class="material-icons">explore</span>
+            Explore Features
+          </a>
+        </div>
+      </div>
+      <div class="hero-image animate-fade-in">
+        <img src="/static/images/images.jpeg" CHEFX Cooking Assistant" width="800" height="450">
+      </div>
+    </div>
+<br><br><br>
+    <section id="features" class="features">
+      <div class="container">
+        <div class="section-title"><br><br><br><br><br><br><br>
+          <h2>Smart Features</h2>
+          <p>Access CHEFX-powered cooking tools</p>
+        </div>
+        <div class="features-grid">
+          <div class="feature-card animate-fade-in">
+            <div class="feature-icon">
+              <span class="material-icons">straighten</span>
+            </div>
+          CHEFX Measurement Converter</h3>
+            <p>Convert any measurement CHEFX precision. From "a pinch" to exact grams, we've got you covered.</p>
+            <a href="/aimeasure" class="btn btn-secondary">Convert Now</a>
+          </div>
+          <div class="feature-card animate-fade-in">
+            <div class="feature-icon">
+              <span class="material-icons">play_circle</span>
+            </div>
+            <h3>Recipe Tutorials</h3>
+            <p>Find the perfect video tutorial for any recipe. Learn from expert chefs and perfect your technique.</p>
+            <a href="/search" class="btn btn-secondary">Watch Tutorials</a>
+          </div>
+          <div class="feature-card animate-fade-in">
+            <div class="feature-icon">
+              <span class="material-icons">smart_toy</span>
+            </div>
+            <h3>Chef Bot</h3>
+            <p>Get real-time cooking guidance fromCHEFX chef. Ask questions and receive expert advice instantly.</p>
+            <a href="/ai" class="btn btn-secondary">Chat with Chef</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="quick-stats" id="quick-stats">
+      <div class="container"><br><br><br><br><br><br>
+        <div class="section-title">
+          <h2>Your Cooking Journey</h2>
+          <p>Track your progress and achievements</p>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card" onclick="showHistoryModal('measurements')">
+            <span class="material-icons">straighten</span>
+            <h3>Measurements Converted</h3>
+            <p class="stat-number" data-stat="measurements_converted">{{ stats.measurements_converted if stats else 0 }}</p>
+          </div>
+          <div class="stat-card" onclick="showHistoryModal('recipes')">
+            <span class="material-icons">restaurant_menu</span>
+            <h3>Recipes Generated</h3>
+            <p class="stat-number" data-stat="recipes_generated">{{ stats.recipes_generated if stats else 0 }}</p>
+          </div>
+          <div class="stat-card" onclick="showHistoryModal('tutorials')">
+            <span class="material-icons">play_circle</span>
+            <h3>Tutorials Watched</h3>
+            <p class="stat-number" data-stat="tutorials_watched">{{ stats.tutorials_watched if stats else 0 }}</p>
+          </div>
+        </div>
+        <br><br><br><br>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <img src="/static/images/images.jpeg" alt="CHEFX" class="footer-logo">
+          <p>Making cooking smarter CHEFX</p>
+        </div>
+        <div class="footer-links">
+          <h4>Quick Links</h4>
+          <a href="/aimeasure">Measurement Converter</a>
+          <a href="/search">Tutorials</a>
+          <a href="/ai">Chef Bot</a>
+          <a href="/aboutus">About Us</a>
+        </div>
+        <div class="footer-links">
+          <h4>Legal</h4>
+          <a href="/privacy">Privacy Policy</a>
+          <a href="/terms">Terms of Service</a>
+        </div>
+        <div class="footer-newsletter">
+          <h4>Stay Updated</h4>
+          <p>Subscribe to our newsletter for cooking tips and updates</p>
+          <form class="newsletter-form">
+            <input type="email" placeholder="Enter your email" class="form-input">
+            <button type="submit" class="btn btn-primary">Subscribe</button>
+          </form>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 CHEFX. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="{{ url_for('static', filename='firebase-config.js') }}"></script>
+  <script type="module" src="{{ url_for('static', filename='dashboard.js') }}"></script>
+  <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+
+  <!-- History Modals -->
+  <div id="measurementsModal" class="history-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Measurement History</h2>
+        <span class="close-modal" onclick="closeHistoryModal('measurements')">&times;</span>
+      </div>
+      <div class="modal-body" id="measurementsHistory">
+        <div class="loading-spinner">
+          <span class="material-icons">hourglass_top</span>
+          <p>Loading history...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="recipesModal" class="history-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Recipe History</h2>
+        <span class="close-modal" onclick="closeHistoryModal('recipes')">&times;</span>
+      </div>
+      <div class="modal-body" id="recipesHistory">
+        <div class="loading-spinner">
+          <span class="material-icons">hourglass_top</span>
+          <p>Loading history...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tutorialsModal" class="history-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Tutorial History</h2>
+        <span class="close-modal" onclick="closeHistoryModal('tutorials')">&times;</span>
+      </div>
+      <div class="modal-body" id="tutorialsHistory">
+        <div class="loading-spinner">
+          <span class="material-icons">hourglass_top</span>
+          <p>Loading history...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentModal = null;
+
+    function showHistoryModal(type) {
+      const modal = document.getElementById(`${type}Modal`);
+      modal.style.display = 'block';
+      currentModal = modal;
+      
+      // Fetch history data
+      fetch(`/api/history/${type}`, {
+        method: 'GET',
+        credentials: 'same-origin'
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch history');
+        }
+        return response.json();
+      })
+      .then(data => {
+        const historyContainer = document.getElementById(`${type}History`);
+        
+        if (!data || !data.length) {
+          historyContainer.innerHTML = `
+            <div class="empty-history">
+              <span class="material-icons">history</span>
+              <p>No history available</p>
+            </div>
+          `;
+          return;
+        }
+        
+        historyContainer.innerHTML = data.map(item => {
+          let content = '';
+          const timestamp = item.timestamp ? new Date(item.timestamp).toLocaleString() : 'Unknown date';
+          
+          switch(type) {
+            case 'measurements':
+              content = `
+                <p><strong>Measurement:</strong> ${item.measurement}</p>
+                <p><strong>Ingredient:</strong> ${item.ingredient}</p>
+                <p><strong>Result:</strong> ${JSON.stringify(item.result, null, 2)}</p>
+              `;
+              break;
+            case 'recipes':
+              content = `
+                <p><strong>Message:</strong> ${item.message}</p>
+                <div class="recipe-response">
+                  <strong>Response:</strong>
+                  <pre>${item.response}</pre>
+                </div>
+              `;
+              break;
+            case 'tutorials':
+              const videoCount = item.videos ? item.videos.length : 0;
+              content = `
+                <p><strong>Recipe Search:</strong> ${item.recipe}</p>
+                <p><strong>Videos Found:</strong> ${videoCount}</p>
+                ${videoCount > 0 ? `
+                  <div class="video-list">
+                    ${item.videos.slice(0, 3).map(video => `
+                      <div class="video-item">
+                        <p><strong>Title:</strong> ${video.title}</p>
+                        <p><strong>Channel:</strong> ${video.channel}</p>
+                        <a href="${video.url}" target="_blank" class="video-link">Watch on YouTube</a>
+                      </div>
+                    `).join('')}
+                  </div>
+                ` : ''}
+              `;
+              break;
+          }
+          
+          return `
+            <div class="history-item">
+              <div class="history-timestamp">${timestamp}</div>
+              <div class="history-content">
+                ${content}
+              </div>
+            </div>
+          `;
+        }).join('');
+      })
+      .catch(error => {
+        console.error('Error fetching history:', error);
+        document.getElementById(`${type}History`).innerHTML = `
+          <div class="empty-history">
+            <span class="material-icons">error</span>
+            <p>Error loading history</p>
+          </div>
+        `;
+      });
+    }
+
+    function closeHistoryModal(type) {
+      const modal = document.getElementById(`${type}Modal`);
+      modal.style.display = 'none';
+      currentModal = null;
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+      if (event.target === currentModal) {
+        currentModal.style.display = 'none';
+        currentModal = null;
+      }
+    }
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape' && currentModal) {
+        currentModal.style.display = 'none';
+        currentModal = null;
+      }
+    });
+  </script>
+
+</body>
+</html>

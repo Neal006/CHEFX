@@ -1,0 +1,297 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Tutorial Finder - Chef AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='tutorial.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="/dashboard" class="logo">
+                <img src="/static/images/images.jpeg" alt="Chef AI" class="logo-img" width="40" height="40">
+                <span class="logo-text">Chef AI</span>
+            </a>
+            <div class="nav-links">
+                <a href="/dashboard" class="nav-link">Dashboard</a>
+                <a href="/aimeasure" class="nav-link">Measurement Converter</a>
+                <a href="/search" class="nav-link active">Tutorials</a>
+                <a href="/ai" class="nav-link">Chef Bot</a>
+                <a href="#" id="logout-btn" class="nav-link">Logout</a>
+            </div>
+            <button class="hamburger" aria-label="Menu">
+                <span class="material-icons">menu</span>
+            </button>
+        </div>
+    </nav>
+
+    <div class="tutorial-container">
+        <div class="content-grid">
+            <div class="main-content">
+                <a href="/dashboard" class="back-button">
+                    <span class="material-icons">arrow_back</span>
+                    Back to Dashboard
+                </a>
+                
+                <div class="tutorial-header">
+                    <h1>Recipe Tutorial Finder</h1>
+                    <p>Find the perfect video tutorial for any recipe</p>
+                </div>
+                
+                <div class="tutorial-search">
+                    <form id="searchForm" class="search-form">
+                        <input type="text" id="recipe" name="recipe" 
+                               class="search-input" 
+                               placeholder="Enter recipe name...">
+                        <button type="submit" class="search-button">
+                            <span class="material-icons">search</span>
+                            Search
+                        </button>
+                    </form>
+                </div>
+
+                <div id="loading" class="loading-indicator">
+                    <span class="material-icons">hourglass_top</span>
+                    <p>Searching for the best tutorials...</p>
+                </div>
+
+                <div id="no-results" class="no-results">
+                    <span class="material-icons">search_off</span>
+                    <p>No tutorials found. Try a different search term.</p>
+                </div>
+
+                <div id="results" class="tutorial-results"></div>
+        </div>
+    </div>
+
+    <style>
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .history-sidebar {
+            background: #3a3a3a;
+            border-radius: 8px;
+            padding: 1.5rem;
+            height: fit-content;
+            position: sticky;
+            top: 2rem;
+        }
+
+        .history-sidebar h2 {
+            color: #F5E6CA;
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .history-item {
+            background: #2D2D2D;
+            border: 1px solid #4a4a4a;
+            border-radius: 6px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .history-item:hover {
+            background: #404040;
+            transform: translateY(-2px);
+        }
+
+        .history-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+
+        .history-item-header h3 {
+            color: #F5E6CA;
+            font-size: 1rem;
+            margin: 0;
+        }
+
+        .history-timestamp {
+            color: #c5b8a0;
+            font-size: 0.75rem;
+        }
+
+        .history-item-count {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #c5b8a0;
+            font-size: 0.875rem;
+        }
+
+        .history-item-count .material-icons {
+            font-size: 1rem;
+            color: #800000;
+        }
+
+        .empty-history {
+            text-align: center;
+            padding: 2rem;
+            color: #c5b8a0;
+        }
+
+        .empty-history .material-icons {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: #800000;
+        }
+
+        @media (max-width: 1024px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .history-sidebar {
+                position: static;
+                margin-top: 2rem;
+            }
+        }
+    </style>
+
+    <script type="module" src="{{ url_for('static', filename='firebase-config.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='dashboard.js') }}"></script>
+    <script>
+        function loadHistoryItem(historyItem) {
+            // Clear current results
+            $('#results').empty();
+            $('#no-results').hide();
+            
+            // Display the videos from history
+            if (historyItem.videos && historyItem.videos.length > 0) {
+                historyItem.videos.forEach(function(video) {
+                    const card = `
+                        <div class="tutorial-card">
+                            <img src="${video.thumbnail}" alt="${video.title}" class="tutorial-card-image">
+                            <div class="tutorial-card-content">
+                                <h3 class="tutorial-card-title">${video.title}</h3>
+                                <p class="tutorial-card-channel">${video.channel}</p>
+                                <p class="tutorial-card-description">${video.description || 'No description available'}</p>
+                                <a href="${video.url}" target="_blank" class="tutorial-card-link">Watch Tutorial</a>
+                            </div>
+                        </div>
+                    `;
+                    $('#results').append(card);
+                });
+                
+                // Scroll to results
+                $('#results')[0].scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Update the existing AJAX success handler to update history
+        function updateHistory(newHistoryItem) {
+            const historyList = $('#history-list');
+            
+            // Create new history item HTML
+            const historyItemHtml = `
+                <div class="history-item" onclick='loadHistoryItem(${JSON.stringify(newHistoryItem)})'>
+                    <div class="history-item-header">
+                        <h3>${newHistoryItem.recipe}</h3>
+                        <span class="history-timestamp">Just now</span>
+                    </div>
+                    <div class="history-item-count">
+                        <span class="material-icons">video_library</span>
+                        ${newHistoryItem.videos.length} videos found
+                    </div>
+                </div>
+            `;
+            
+            // Remove empty history message if present
+            $('.empty-history').remove();
+            
+            // Prepend new history item
+            historyList.prepend(historyItemHtml);
+        }
+
+        // Update the existing AJAX success handler
+        $(document).ready(function() {
+            $('#searchForm').on('submit', function(e) {
+                e.preventDefault();
+                
+                const recipe = $('#recipe').val().trim();
+                if (!recipe) return;
+                
+                $('#loading').show();
+                $('#results').empty();
+                $('#no-results').hide();
+                
+                $.ajax({
+                    url: '/search',
+                    method: 'POST',
+                    data: { recipe: recipe },
+                    success: function(data) {
+                        $('#loading').hide();
+                        
+                        if (data.videos && data.videos.length > 0) {
+                            data.videos.forEach(function(video) {
+                                const card = `
+                                    <div class="tutorial-card">
+                                        <img src="${video.thumbnail}" alt="${video.title}" class="tutorial-card-image">
+                                        <div class="tutorial-card-content">
+                                            <h3 class="tutorial-card-title">${video.title}</h3>
+                                            <p class="tutorial-card-channel">${video.channel}</p>
+                                            <p class="tutorial-card-stats">Views: ${video.views}, Likes: ${video.likes}</p>
+                                            <a href="${video.url}" target="_blank" class="tutorial-card-link">Watch Tutorial</a>
+                                        </div>
+                                    </div>
+                                `;
+                                $('#results').append(card);
+                            });
+                            
+                            // Update history if provided
+                            if (data.history) {
+                                updateHistory({
+                                    recipe: recipe,
+                                    videos: data.videos,
+                                    timestamp: new Date().toISOString()
+                                });
+                            }
+                        } else {
+                            $('#no-results').show();
+                        }
+                    },
+                    error: function() {
+                        $('#loading').hide();
+                        $('#no-results').show();
+                    }
+                });
+            });
+            
+            // Handle mobile menu
+            $('.hamburger').on('click', function() {
+                $('.nav-links').toggleClass('active');
+            });
+            
+            // Handle logout
+            $('#logout-btn').on('click', function(e) {
+                e.preventDefault();
+                window.location.href = '/logout';
+            });
+        });
+    </script>
+</body>
+</html>
