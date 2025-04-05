@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: ChefX
+    env: python
+    buildCommand: ""
+    startCommand: gunicorn app:app
